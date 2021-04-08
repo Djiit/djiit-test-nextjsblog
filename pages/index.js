@@ -32,7 +32,7 @@ const Home = ({ doc, posts }) => {
   return <SetupRepo />;
 };
 
-export async function getStaticProps({ preview = null, previewData = {} }) {
+export async function getServerSideProps({ preview = null, previewData = {} }) {
 
   const { ref } = previewData
 
