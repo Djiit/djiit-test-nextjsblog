@@ -1,7 +1,8 @@
 import React from "react";
 import Head from "next/head";
-import Prismic from '@prismicio/client'
+import Prismic from "@prismicio/client";
 import { RichText } from "prismic-reactjs";
+import { default as NextLink } from "next/link";
 
 // Project components & functions
 import DefaultLayout from "layouts";
@@ -24,6 +25,9 @@ const Home = ({ doc, posts }) => {
           description={doc.data.description}
         />
         <PostList posts={posts} />
+        <NextLink href="/test">
+          <a>Go to /test</a>
+        </NextLink>
       </DefaultLayout>
     );
   }
@@ -33,27 +37,27 @@ const Home = ({ doc, posts }) => {
 };
 
 export async function getServerSideProps({ preview = null, previewData = {} }) {
+  const { ref } = previewData;
 
-  const { ref } = previewData
+  const client = Client();
 
-  const client = Client()
-
-  const doc = await client.getSingle("blog_home", ref ? { ref } : null) || {}
+  const doc = (await client.getSingle("blog_home", ref ? { ref } : null)) || {};
 
   const posts = await client.query(
-    Prismic.Predicates.at("document.type", "post"), {
+    Prismic.Predicates.at("document.type", "post"),
+    {
       orderings: "[my.post.date desc]",
-      ...(ref ? { ref } : null)
-    },
-  )
+      ...(ref ? { ref } : null),
+    }
+  );
 
   return {
     props: {
       doc,
       posts: posts ? posts.results : [],
-      preview
-    }
-  }
+      preview,
+    },
+  };
 }
 
 export default Home;
